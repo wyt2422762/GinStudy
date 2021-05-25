@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/wyt/GinStudy/conf"
+	cusErr "github.com/wyt/GinStudy/error"
 	"github.com/wyt/GinStudy/handler"
 	"github.com/wyt/GinStudy/middlewares"
 )
@@ -64,12 +66,39 @@ func simpleRouterGroupDemo() {
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }
 
+type HandlerFunc func(c *gin.Context) error
+
+//统一错误处理
+func wrapper(handler HandlerFunc) func(c *gin.Context) {
+    return func(c *gin.Context) {
+        err := handler(c)
+		if err != nil {
+			if e, ok := err.(cusErr.CusError); ok {
+				c.Status(e.Code)
+			} else {
+				c.Status(http.StatusInternalServerError)
+			}
+			fmt.Println("出错啦: ", err.Error())
+			return
+		}
+    }
+}
+
+//404处理
+func HandleNotFound(c *gin.Context) {
+	c.Status(http.StatusNotFound)
+    fmt.Println("404")
+}
+
 //简单template示例
 func simpleTemplateDemo() {
 	fmt.Println("Gin Router 简单示例")
 	r := gin.Default()
 	//设置中间件(跨域问题)
 	r.Use(middlewares.Cors())
+	//404处理
+	r.NoMethod(HandleNotFound)
+    r.NoRoute(HandleNotFound)
 	//index路由组
 	index := r.Group("/")
 	{
@@ -91,8 +120,8 @@ func simpleTemplateDemo() {
 	//page/auth路由组
 	page := r.Group("/page/auth")
 	{
-		page.GET("/toLogin", handler.GotoLoginPage)
-		page.POST("/login", handler.Login)
+		page.GET("/toLogin", wrapper(handler.GotoLoginPage))
+		page.POST("/login", wrapper(handler.Login))
 	}
 	// jwtTest路由组
 	jwtTest := r.Group("/jwtTest", middlewares.JwtAuth())
@@ -101,3 +130,4 @@ func simpleTemplateDemo() {
 	}
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }
+

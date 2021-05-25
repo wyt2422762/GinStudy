@@ -8,3 +8,10 @@ type User struct{
 	Email string `form:"email"`
 	Telephone string `form:"telephone"`
 }
+
+type LoginUser struct{
+	CacheKey string
+	User
+}
+
+const LOGIN_TOKEN_KEY string = "login_token:"

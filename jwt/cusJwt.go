@@ -12,10 +12,11 @@ import (
 //token过期时间
 const tokenExpireDuration = time.Hour * 2
 //密钥
-const sercet = "wyt"
+var sercet = []byte("wyt")
 
 //自定义载荷
 type CusClaims struct {
+	CacheKey string `json:"cacheKey"`
 	UserId   string `json:"userId"`
 	Username string `json:"username"`
 	Password string `json:"pwssword"`
@@ -23,8 +24,9 @@ type CusClaims struct {
 }
 
 //生成token
-func CreateToken(user model.User) (string, error){
+func CreateToken(user model.LoginUser) (string, error){
 	cusClaims := CusClaims{
+		user.CacheKey,
 		user.ID,
 		user.Username,
 		user.Password,

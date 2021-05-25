@@ -2,5 +2,9 @@ package test
 
 import (
 	_ "fmt"
-	_ "testing"
+	"testing"
 )
+
+func Test(test *testing.T){
+
+}
