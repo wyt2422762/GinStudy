@@ -10,13 +10,29 @@ import (
 	cusErr "github.com/wyt/GinStudy/error"
 	"github.com/wyt/GinStudy/handler"
 	"github.com/wyt/GinStudy/middlewares"
+	"github.com/wyt/GinStudy/router"
 )
 
 func main() {
 	// simpleDemo()
 	// simpleRouterDemo()
 	// simpleRouterGroupDemo()
-	simpleTemplateDemo()
+	// simpleTemplateDemo()
+
+	startServer()
+}
+
+//启动服务
+func startServer(){
+	fmt.Println("Gin服务端启动")
+	r := gin.Default()
+	// 跨域中间件
+	r.Use(middlewares.Cors())
+	// 设置路由
+	router.BuildRouter(r)
+
+	r.Run(":" + strconv.Itoa(conf.HttpPort))
+	fmt.Println("Gin服务端启动成功")
 }
 
 //简单示例
@@ -86,7 +102,12 @@ func wrapper(handler HandlerFunc) func(c *gin.Context) {
 
 //404处理
 func HandleNotFound(c *gin.Context) {
-	c.Status(http.StatusNotFound)
+	// c.Status(http.StatusNotFound)
+	c.JSON(http.StatusNotFound, gin.H{
+		"code":    http.StatusOK,
+		"msg":     "404",
+		"success": false,
+	})
     fmt.Println("404")
 }
 

@@ -1,0 +1,38 @@
+definitions:
+  base.Resp:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data: {}
+      msg:
+        example: 成功
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /test:
+    get:
+      consumes:
+      - application/json
+      description: 测试 gin-swagger
+      parameters:
+      - description: id
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/base.Resp'
+      summary: 测试 gin-swagger
+      tags:
+      - 测试 gin-swagger
+swagger: "2.0"
