@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	"github.com/wyt/GinStudy/conf"
-	cusErr "github.com/wyt/GinStudy/error"
 	"github.com/wyt/GinStudy/handler"
 	"github.com/wyt/GinStudy/middlewares"
 	"github.com/wyt/GinStudy/router"
+	cusErr "github.com/wyt/GinStudy/error"
 )
 
 func main() {
@@ -22,12 +24,15 @@ func main() {
 	startServer()
 }
 
-//启动服务
-func startServer(){
+// 启动服务
+func startServer() {
 	fmt.Println("Gin服务端启动")
 	r := gin.Default()
+	// r := gin.New()
+	// r.Use(gin.Recovery())
+
 	// 跨域中间件
-	r.Use(middlewares.Cors())
+	r.Use(cors.Default())
 	// 设置路由
 	router.BuildRouter(r)
 
@@ -35,7 +40,7 @@ func startServer(){
 	fmt.Println("Gin服务端启动成功")
 }
 
-//简单示例
+// 简单示例
 func simpleDemo() {
 	fmt.Println("Gin简单示例")
 	r := gin.Default()
@@ -45,7 +50,7 @@ func simpleDemo() {
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }
 
-//简单路由示例
+// 简单路由示例
 func simpleRouterDemo() {
 	fmt.Println("Gin Router 简单示例")
 	r := gin.Default()
@@ -58,7 +63,7 @@ func simpleRouterDemo() {
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }
 
-//简单路由分组示例
+// 简单路由分组示例
 func simpleRouterGroupDemo() {
 	fmt.Println("Gin Router 简单示例")
 	r := gin.Default()
@@ -84,10 +89,10 @@ func simpleRouterGroupDemo() {
 
 type HandlerFunc func(c *gin.Context) error
 
-//统一错误处理
+// 统一错误处理
 func wrapper(handler HandlerFunc) func(c *gin.Context) {
-    return func(c *gin.Context) {
-        err := handler(c)
+	return func(c *gin.Context) {
+		err := handler(c)
 		if err != nil {
 			if e, ok := err.(cusErr.CusError); ok {
 				c.Status(e.Code)
@@ -97,10 +102,10 @@ func wrapper(handler HandlerFunc) func(c *gin.Context) {
 			fmt.Println("出错啦: ", err.Error())
 			return
 		}
-    }
+	}
 }
 
-//404处理
+// 404处理
 func HandleNotFound(c *gin.Context) {
 	// c.Status(http.StatusNotFound)
 	c.JSON(http.StatusNotFound, gin.H{
@@ -108,18 +113,18 @@ func HandleNotFound(c *gin.Context) {
 		"msg":     "404",
 		"success": false,
 	})
-    fmt.Println("404")
+	fmt.Println("404")
 }
 
-//简单template示例
+// 简单template示例
 func simpleTemplateDemo() {
 	fmt.Println("Gin Router 简单示例")
 	r := gin.Default()
 	//设置中间件(跨域问题)
-	r.Use(middlewares.Cors())
+	r.Use(cors.Default())
 	//404处理
 	r.NoMethod(HandleNotFound)
-    r.NoRoute(HandleNotFound)
+	r.NoRoute(HandleNotFound)
 	//index路由组
 	index := r.Group("/")
 	{
@@ -151,4 +156,3 @@ func simpleTemplateDemo() {
 	}
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }
-
