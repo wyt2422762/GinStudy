@@ -13,6 +13,8 @@ import (
 	"github.com/wyt/GinStudy/middlewares"
 	"github.com/wyt/GinStudy/router"
 	cusErr "github.com/wyt/GinStudy/error"
+
+	"github.com/wyt/GinStudy/log"
 )
 
 func main() {
@@ -26,18 +28,20 @@ func main() {
 
 // 启动服务
 func startServer() {
-	fmt.Println("Gin服务端启动")
+	log.Logger.Info("Gin服务端启动")
 	r := gin.Default()
 	// r := gin.New()
 	// r.Use(gin.Recovery())
 
 	// 跨域中间件
 	r.Use(cors.Default())
+	//请求日志中间件
+	// r.Use(middlewares.WriteLog())
 	// 设置路由
 	router.BuildRouter(r)
 
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
-	fmt.Println("Gin服务端启动成功")
+	log.Logger.Info("Gin服务端启动成功")
 }
 
 // 简单示例
@@ -99,6 +103,7 @@ func wrapper(handler HandlerFunc) func(c *gin.Context) {
 			} else {
 				c.Status(http.StatusInternalServerError)
 			}
+			c.Error(err)
 			fmt.Println("出错啦: ", err.Error())
 			return
 		}
