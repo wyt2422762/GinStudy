@@ -1,3 +1,0 @@
-{"level":"info","msg":"Gin服务端启动","time":"2023-02-07 18:04:14.318"}
-{"level":"info","msg":"Gin服务端启动","time":"2023-02-07 18:05:00.705"}
-{"clientIP":"::1","errs":"","level":"info","method":"GET","msg":"请求日志","reqTime":"2023-02-07T18:05:29.9494843+08:00","spendTime":0,"statusCode":200,"time":"2023-02-07 18:05:29.950","url":{"Scheme":"","Opaque":"","User":null,"Host":"","Path":"/test","RawPath":"","OmitHost":false,"ForceQuery":false,"RawQuery":"id=123","Fragment":"","RawFragment":""}}
