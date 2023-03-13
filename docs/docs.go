@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/test": {
+        "/test/1": {
             "get": {
                 "description": "测试 gin-swagger",
                 "consumes": [
@@ -35,6 +35,38 @@ const docTemplate = `{
                         "description": "id",
                         "name": "id",
                         "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/base.Resp"
+                        }
+                    }
+                }
+            }
+        },
+        "/test/2/{id}": {
+            "get": {
+                "description": "测试 gin-swagger",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "测试 gin-swagger"
+                ],
+                "summary": "测试 gin-swagger",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
