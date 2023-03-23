@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/wyt/GinStudy/conf"
+	log "github.com/wyt/GinStudy/log/hooks"
 
 	"github.com/lestrrat-go/file-rotatelogs"
 )
@@ -57,4 +58,8 @@ func init() {
 
 	//设置全局Logger日志输出流(同时输出控制台和文件)
 	Logger.SetOutput(fileAndStdoutStream)
+
+	//添加hook
+	wytHook := log.NewWytHook("wyt")
+	Logger.AddHook(wytHook)
 }
