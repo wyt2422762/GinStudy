@@ -1,11 +1,19 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Swagger API 示例",
+        "title": "Swagger API 示例",
+        "contact": {},
+        "version": "0.0.1"
     },
     "paths": {
         "/test/1": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "测试 gin-swagger",
                 "consumes": [
                     "application/json"
@@ -86,6 +94,13 @@
                     "example": false
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
         }
     }
 }

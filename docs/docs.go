@@ -18,6 +18,11 @@ const docTemplate = `{
     "paths": {
         "/test/1": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "测试 gin-swagger",
                 "consumes": [
                     "application/json"
@@ -99,17 +104,24 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "0.0.1",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Swagger API 示例",
+	Description:      "Swagger API 示例",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

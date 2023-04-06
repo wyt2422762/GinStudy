@@ -17,6 +17,14 @@ import (
 	"github.com/wyt/GinStudy/log"
 )
 
+
+// @title Swagger API 示例
+// @version 0.0.1 
+// @description Swagger API 示例
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name token
+// @BasePath
 func main() {
 	// simpleDemo()
 	// simpleRouterDemo()

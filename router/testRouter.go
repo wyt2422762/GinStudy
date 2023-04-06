@@ -31,6 +31,7 @@ func testRouter(r *gin.Engine) {
 // @Accept json
 // @Produce json
 // @param id query string false "id"
+// @Security ApiKeyAuth
 // @Success 200 {object} base.Resp
 // @Router /test/1 [get]
 func test(c *gin.Context) {
