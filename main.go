@@ -2,24 +2,22 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+	"github.com/wyt/GinStudy/base"
 	"github.com/wyt/GinStudy/conf"
 	"github.com/wyt/GinStudy/handler"
 	"github.com/wyt/GinStudy/middlewares"
 	"github.com/wyt/GinStudy/router"
-	cusErr "github.com/wyt/GinStudy/error"
 
 	"github.com/wyt/GinStudy/log"
 )
 
-
 // @title Swagger API 示例
-// @version 0.0.1 
+// @version 0.0.1
 // @description Swagger API 示例
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -67,11 +65,11 @@ func simpleRouterDemo() {
 	fmt.Println("Gin Router 简单示例")
 	r := gin.Default()
 	//最简单的请求路由
-	r.GET("/", handler.SimpleHandler)
+	r.GET("/", base.Wrapper(handler.Simple.SimpleHandler))
 	//带路径参数的路由
-	r.GET("/user/:name", handler.SimpleUrlParamHandler)
+	r.GET("/user/:name", base.Wrapper(handler.Simple.SimpleUrlParamHandler))
 	//?后面传参的路由
-	r.GET("/user", handler.SimplParamHandler)
+	r.GET("/user", base.Wrapper(handler.Simple.SimplParamHandler))
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }
 
@@ -84,49 +82,19 @@ func simpleRouterGroupDemo() {
 	index := r.Group("/")
 	{
 		//最简单的请求路由
-		index.GET("", handler.SimpleHandler)
+		index.GET("", base.Wrapper(handler.Simple.SimpleHandler))
 	}
 
 	//user路由组
 	user := r.Group("/user")
 	{
 		//带路径参数的路由
-		user.GET("/:name", handler.SimpleUrlParamHandler)
+		user.GET("/:name", base.Wrapper(handler.Simple.SimpleUrlParamHandler))
 		//?后面传参的路由
-		user.GET("", handler.SimplParamHandler)
+		user.GET("", base.Wrapper(handler.Simple.SimplParamHandler))
 	}
 
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
-}
-
-type HandlerFunc func(c *gin.Context) error
-
-// 统一错误处理
-func wrapper(handler HandlerFunc) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		err := handler(c)
-		if err != nil {
-			if e, ok := err.(cusErr.CusError); ok {
-				c.Status(e.Code)
-			} else {
-				c.Status(http.StatusInternalServerError)
-			}
-			c.Error(err)
-			fmt.Println("出错啦: ", err.Error())
-			return
-		}
-	}
-}
-
-// 404处理
-func HandleNotFound(c *gin.Context) {
-	// c.Status(http.StatusNotFound)
-	c.JSON(http.StatusNotFound, gin.H{
-		"code":    http.StatusOK,
-		"msg":     "404",
-		"success": false,
-	})
-	fmt.Println("404")
 }
 
 // 简单template示例
@@ -136,21 +104,21 @@ func simpleTemplateDemo() {
 	//设置中间件(跨域问题)
 	r.Use(cors.Default())
 	//404处理
-	r.NoMethod(HandleNotFound)
-	r.NoRoute(HandleNotFound)
+	r.NoMethod(base.HandleNotFound)
+	r.NoRoute(base.HandleNotFound)
 	//index路由组
 	index := r.Group("/")
 	{
 		//最简单的请求路由
-		index.GET("", handler.SimpleHandler)
+		index.GET("", base.Wrapper(handler.Simple.SimpleHandler))
 	}
 	//user路由组
 	user := r.Group("/user")
 	{
 		//带路径参数的路由
-		user.GET("/:name", handler.SimpleUrlParamHandler)
+		user.GET("/:name", base.Wrapper(handler.Simple.SimpleUrlParamHandler))
 		//?后面传参的路由
-		user.GET("", handler.SimplParamHandler)
+		user.GET("", base.Wrapper(handler.Simple.SimplParamHandler))
 	}
 	//模板资源位置
 	r.LoadHTMLGlob("templates/**/*")
@@ -159,13 +127,13 @@ func simpleTemplateDemo() {
 	//page/auth路由组
 	page := r.Group("/page/auth")
 	{
-		page.GET("/toLogin", wrapper(handler.GotoLoginPage))
-		page.POST("/login", wrapper(handler.Login))
+		page.GET("/toLogin", base.Wrapper(handler.Page.GotoLoginPage))
+		page.POST("/login", base.Wrapper(handler.Page.Login))
 	}
 	// jwtTest路由组
 	jwtTest := r.Group("/jwtTest", middlewares.JwtAuth())
 	{
-		jwtTest.GET("", handler.JwtTest)
+		jwtTest.GET("", base.Wrapper(handler.JwtTest.JwtTest))
 	}
 	r.Run(":" + strconv.Itoa(conf.HttpPort))
 }

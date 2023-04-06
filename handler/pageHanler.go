@@ -6,12 +6,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/wyt/GinStudy/base"
+	cusErr "github.com/wyt/GinStudy/error"
 	"github.com/wyt/GinStudy/jwt"
 	"github.com/wyt/GinStudy/model"
-	cusErr "github.com/wyt/GinStudy/error"
 )
 
-func GotoLoginPage(c *gin.Context) error {
+type pageHandler struct {
+	base.BaseHandler
+}
+
+var Page = &pageHandler{}
+
+func (page *pageHandler) GotoLoginPage(c *gin.Context) error {
 	title := c.Param("title")
 	c.HTML(http.StatusOK, "login.html", gin.H{
 		"title": title,
@@ -19,8 +26,8 @@ func GotoLoginPage(c *gin.Context) error {
 	return nil
 }
 
-//登录方法
-func Login(c *gin.Context) error {
+// 登录方法
+func (page *pageHandler) Login(c *gin.Context) error {
 	//普通方式获取
 	/* username := c.PostForm("username")
 	password := c.PostForm("password")
@@ -36,7 +43,7 @@ func Login(c *gin.Context) error {
 	//生成token
 	loginUser := model.LoginUser{
 		CacheKey: model.LOGIN_TOKEN_KEY + user.Username + ":" + time.Now().String(),
-		User: user,
+		User:     user,
 	}
 	token, err := jwt.CreateToken(loginUser)
 	if err != nil {
