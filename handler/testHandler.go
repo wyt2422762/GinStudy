@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/wyt/GinStudy/base"
+	cusErr "github.com/wyt/GinStudy/error"
 )
 
 type testHandler struct {
@@ -48,11 +49,20 @@ func (ts *testHandler) Test(c *gin.Context) error {
 // @Router /test/2/{id} [get]
 func (ts *testHandler) Test2(c *gin.Context) error {
 	fmt.Printf("收到请求，请求地址%s\n", c.FullPath())
+	// panic(cusErr.NewCusError(http.StatusBadRequest, "参数错误"))
+	
 	id := c.Param("id")
+
+	if id == "999" {
+		return cusErr.NewCusError(400, "黑名单")
+	}
+
 	c.JSON(http.StatusOK, base.Resp{
 		Code:    http.StatusOK,
 		Msg:     "从服务端返回的数据：" + id,
 		Success: true,
+		Data: 123,
 	})
+
 	return nil
 }

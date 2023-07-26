@@ -10,7 +10,7 @@ import (
 	"github.com/wyt/GinStudy/conf"
 )
 
-func init() {
+func init2() {
 	var sb strings.Builder
 	sb.WriteString(conf.DbUesr)
 	sb.WriteString(":")

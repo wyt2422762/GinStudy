@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-contrib/cors"
@@ -36,11 +37,17 @@ func main() {
 func startServer() {
 	log.Logger.Info("Gin服务端启动")
 	r := gin.Default()
-	// r := gin.New()
-	// r.Use(gin.Recovery())
+
+	// 404处理
+	r.NoRoute(base.HandleNotFound(http.StatusNotFound, strconv.Itoa(http.StatusNotFound)))
+	// 405处理
+	r.NoMethod(base.HandleNotFound(http.StatusMethodNotAllowed, strconv.Itoa(http.StatusMethodNotAllowed)))
+
+	r.Use(gin.CustomRecovery(middlewares.ErrorHanlder()))
 
 	// 跨域中间件
 	r.Use(cors.Default())
+
 	//请求日志中间件
 	// r.Use(middlewares.WriteLog())
 	// 设置路由
@@ -103,9 +110,11 @@ func simpleTemplateDemo() {
 	r := gin.Default()
 	//设置中间件(跨域问题)
 	r.Use(cors.Default())
-	//404处理
-	r.NoMethod(base.HandleNotFound)
-	r.NoRoute(base.HandleNotFound)
+	// 404处理
+	r.NoRoute(base.HandleNotFound(http.StatusNotFound, strconv.Itoa(http.StatusNotFound)))
+	// 405处理
+	r.NoMethod(base.HandleNotFound(http.StatusMethodNotAllowed, strconv.Itoa(http.StatusMethodNotAllowed)))
+
 	//index路由组
 	index := r.Group("/")
 	{
