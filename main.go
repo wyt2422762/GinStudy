@@ -43,6 +43,7 @@ func startServer() {
 	// 405处理
 	r.NoMethod(base.HandleNotFound(http.StatusMethodNotAllowed, strconv.Itoa(http.StatusMethodNotAllowed)))
 
+	// 错误处理
 	r.Use(gin.CustomRecovery(middlewares.ErrorHanlder()))
 
 	// 跨域中间件
